@@ -1,0 +1,19 @@
+RESULT_PATH: './experiments'
+MODEL:
+  MODEL_NAME: 'inceptionv3'
+  SAVE_DIR: './checkpoints'
+  SAVE_NAME: 'best.pth'
+TRAIN:
+  BEGIN_CHECKPOINT: ''
+  BATCH_SIZE_PER_GPU: 128
+  NUM_WORKERS: 12
+  SHUFFLE: true
+  BEGIN_EPOCH: 0
+  END_EPOCH: 500
+  EARLY_STOP: 30
+  OPTIMIZER: 'adam'
+  LR: 0.0001
+  WD: 0.0
+  LR_STEP: [30, 50]
+  MOMENTUM: 0.0
+  NESTEROV: false
