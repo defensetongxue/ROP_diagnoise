@@ -5,20 +5,26 @@ import numpy as np
 
 def generate_new_label(data_path):
     # Generate path_image folder
+    os.makedirs(os.path.join(data_path,'tmp_annotations'),exist_ok=True)
     splits=['train','val','test']
     for split in splits:
         new_annote=[]
         with open(os.path.join(data_path,'ridge',f'{split}.json'),'r') as f:
             ridge_data=json.load(f)
-        have_ridge=[i['image_name'] for i in ridge_data]
-
+        have_ridge = [i['image_name'] for i in ridge_data if i['ridge_number'] > 0]
+        print(len(have_ridge))
         with open(os.path.join(data_path,'annotations',f'{split}.json'),'r') as f:
             old_annote=json.load(f)
         for annote in old_annote:
+            if annote['class']==0:
+                new_annote.append(annote)
+                continue
             if not annote['image_name'] in have_ridge:
                 annote['class']=annote['class']*2-1
+            else:
+                annote['class']=annote['class']*2
             new_annote.append(annote)
-        with open(os.path.join(data_path,'annotations',f'{split}.json'),'w') as f:
+        with open(os.path.join(data_path,'tmp_annotations',f'{split}.json'),'w') as f:
             json.dump(new_annote,f)
 
 
