@@ -191,7 +191,6 @@ class generate_data_processer():
                 
                 file_class_cnt=dict(zip(self.data_cnt.keys(),[0]*(self.class_number)))
                 annotations=[]
-                eye_label="0"
 
                 for file in os.listdir(file_dic):
                     # if the data can be used
@@ -214,13 +213,6 @@ class generate_data_processer():
                     # Build dict to record the label cnt
                     file_class_cnt[label]+=1
 
-                    if label != "0":
-                        if eye_label!="0"and label!=eye_label:
-                            print(f"Error in file {file_dic}")
-                        elif eye_label=="0":
-                            eye_label=label
-                        # else eye_label==label and not the zero: pass
-
                     shutil.copy(os.path.join(file_dic,file),
                         os.path.join(self.tar_path, 'images',file_name))
                     annotations.append(self.get_json(datanumber_cnt,
@@ -230,8 +222,7 @@ class generate_data_processer():
                                                      image_path_original = os.path.join(file_dic,file),
                                                      label=label))# the label now just act as Placeholder
                     datanumber_cnt+=1
-                for annote in annotations:
-                    annote['class']=self.label_map[eye_label]
+                
                     
                 # because of Note 2 
                 file_label_number=np.array([i for i in file_class_cnt.values()])

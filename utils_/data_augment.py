@@ -61,7 +61,7 @@ def generate_data_augument(data_path="",threshold=0.2,sample_number=500):
                 image_path=annotations[rare_index]['image_path']
                 img=Image.open(image_path)
                 img_transformed=augument_transform(img)
-                new_path=os.path.join(data_path,'images,'f"aug_{os.path.basename(image_path)}")
+                new_path=os.path.join(data_path,'images'f"aug_{os.path.basename(image_path)}")
                 img_transformed.save(new_path)
                 augument_annotation.append(save_format(
                     image_path=new_path,
