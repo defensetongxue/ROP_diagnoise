@@ -20,7 +20,7 @@ if __name__=='__main__':
     data_path=args.path_tar
     for split in ['train','val','test']:
         modify_class(
-            file_path=os.path.join(data_path,'annotations',f"{split}.json"),
+            file_path=os.path.join(data_path,'ridge',f"{split}.json"),
             modify_file='./modify_list.txt',
             from_class=3,
             to_class=2
