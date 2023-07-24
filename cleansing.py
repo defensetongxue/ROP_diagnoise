@@ -9,7 +9,7 @@ class generate_data_processer():
     def __init__(self,src_path="../autodl-tmp/data_original",
                  tar_path="../autodl-tmp/dataset_ROP",
                  spilt_train=0.7,
-                 spilt_val=0.2):
+                 spilt_val=0.2,clear=False):
         '''
         find the original data in {src_path} and 
         generate dataset in {target_patg} with the style:
@@ -49,7 +49,8 @@ class generate_data_processer():
 
         # Create essencial folder
         os.makedirs(tar_path,exist_ok=True)
-        os.system(f"rm -rf {tar_path}/*") # clear exited data
+        if clear:
+            os.system(f"rm -rf {tar_path}/*") # clear exited data
         os.makedirs(os.path.join(tar_path,"images"),exist_ok=True)
         os.makedirs(os.path.join(tar_path,"annotations"),exist_ok=True)
 
@@ -119,7 +120,7 @@ class generate_data_processer():
                 return "-1"
             return stage
         else:
-            return "0"
+            return "0" 
         
     def get_condition(self):
         '''
@@ -265,6 +266,9 @@ class generate_data_processer():
 if __name__ == '__main__':
     # Init the args
     args = get_config()
+    if args.generate_ridge:
+        from utils_ import generate_ridge
+        generate_ridge(args.json_file_dict,args.path_tar)
     if args.cleansing:
         cleansing_processer=generate_data_processer(src_path=args.path_src,
                                                     tar_path=args.path_tar,
@@ -272,5 +276,5 @@ if __name__ == '__main__':
                                                     spilt_val=args.val_split )
         cleansing_processer.paser()
     
-    if args.data_augument:
-        generate_data_augument(data_path=args.path_tar)
+    # if args.data_augument:
+    #     generate_data_augument(data_path=args.path_tar)

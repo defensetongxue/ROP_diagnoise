@@ -13,6 +13,7 @@ def get_config():
     parser.add_argument('--generate_ridge', type=bool, default=True,
                         help='if generate the ridge cooridinate from json src.')
     parser.add_argument('--cleansing', type=bool, default=True, help='if parse orginal data')
+    parser.add_argument('--generate_ridge', type=bool, default=True, help='if parse orginal data')
     parser.add_argument('--data_augument', type=bool, default=False, help='if doing optic disc detection')
 
     # train and test
