@@ -266,15 +266,15 @@ class generate_data_processer():
 if __name__ == '__main__':
     # Init the args
     args = get_config()
-    if args.generate_ridge:
-        from utils_ import generate_ridge
-        generate_ridge(args.json_file_dict,args.path_tar)
+    
     if args.cleansing:
         cleansing_processer=generate_data_processer(src_path=args.path_src,
                                                     tar_path=args.path_tar,
                                                     spilt_train=args.train_split,
                                                     spilt_val=args.val_split )
         cleansing_processer.paser()
-    
+    if args.generate_ridge:
+        from utils_ import generate_ridge
+        generate_ridge(args.json_file_dict,args.path_tar)
     # if args.data_augument:
     #     generate_data_augument(data_path=args.path_tar)
