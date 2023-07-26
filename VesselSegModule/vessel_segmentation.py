@@ -1,7 +1,7 @@
-import os
+import os,json
 from .vessel_seg_processer import VesselSegProcesser
-from PIL import Image
-def generate_vessel_result(data_path='./data'):
+from utils_ import api_update
+def generate_vessel(data_path='./data'):
     '''
     This funtion should be exited after the data cleasning. 
     └───data
@@ -30,6 +30,7 @@ def generate_vessel_result(data_path='./data'):
     Thanks a lot
     '''
     # Create save dir 
+    print("begin to generate vessel segmentation mask")
     save_dir=os.path.join(data_path,'vessel_seg')
     os.makedirs(save_dir,exist_ok=True)
 
@@ -37,12 +38,17 @@ def generate_vessel_result(data_path='./data'):
     processer=VesselSegProcesser(model_name='FR_UNet')
 
     # Image list
-    img_dir=os.path.join(data_path,'images')
-    img_list=os.listdir(img_dir)
-
-    for image_name in img_list:
-        img=Image.open(os.path.join(img_dir,image_name))
-        processer(img,save_path=os.path.join(save_dir,image_name))
+    with open(os.path.join(data_path,'annotations.json'),'r') as f:
+        data_list=json.load(f)
+    for image_name in data_list:
+        save_path=os.path.join(save_dir,image_name)
+        processer(data_list[image_name]['image_path'],
+                  save_path=save_path)
+        data_list[image_name]['vessel_path']=save_path
+    with open(os.path.join(data_path,'annotations.json'),'w') as f:
+        json.dump(data_list,f)
+    api_update(data_path,'vessel path','path to vessel segmentation mask')
+    print("finish")
 
     
         

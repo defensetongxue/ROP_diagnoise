@@ -47,7 +47,8 @@ class VesselSegProcesser():
             # TODO using more precise score
         ])
 
-    def __call__(self, img,save_path=None):
+    def __call__(self, img_path,save_path=None):
+        img=Image.open(img_path)
         # open the image and preprocess
         with torch.no_grad():
             decomposed_images = decompose_image_into_tensors(self.transforms(img))

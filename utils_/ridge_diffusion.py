@@ -8,6 +8,7 @@ import os
 from scipy.ndimage import gaussian_filter
 from .api_record import api_check,api_update
 def generate_ridge_diffusion(data_path):
+    print("begin to generate ridge annotations")
     api_check(data_path,'ridge')
     os.makedirs(os.path.join(data_path,'ridge_diffusion'),exist_ok=True)
     os.system(f"rm -rf {os.path.join(data_path,'ridge_diffusion')}/*")
@@ -26,7 +27,7 @@ def generate_ridge_diffusion(data_path):
     with open(os.path.join(data_path,'annotations.json'),'w') as f:
         json.dump(data_list,f)
     api_update(data_path,'ridge_diffusion_path','path to ridge diffusion mask')
-    
+    print("finish")
 def generate_diffusion_heatmap(image_path,points,factor=0.5,Gauss=False):
     '''
     factor is the compress rate: for stability, we firt apply a conv layer to 

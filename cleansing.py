@@ -18,7 +18,8 @@ if __name__=='__main__':
         from EyeQualityModule import generate_quality
         generate_quality(args.path_tar)
     if args.generate_vessel:
-        pass
+        from VesselSegModule import generate_vessel
+        generate_vessel(args.path_tar)
     if args.generate_pos_embed:
         pass
     if args.generate_ridge_diffusion:

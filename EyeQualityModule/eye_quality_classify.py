@@ -28,6 +28,7 @@ def generate_quality(data_path='./data'):
     '''
 
     # Init processer
+    print("begin to generate fundus image quality")
     processer=EyeQualityProcesser()
 
     # Image list
@@ -42,6 +43,6 @@ def generate_quality(data_path='./data'):
     with open(os.path.join(data_path,'annotations.json'),'w') as f:
         json.dump(data_list,f)
     api_update(data_path,'quality','fundus image quality 0:Good 1:Usable 2:Reject')
-    
+    print("finish")
     
         
