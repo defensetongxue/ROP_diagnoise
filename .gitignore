@@ -2,6 +2,8 @@ __pycache__
 saved/
 ring.py
 *.out
+*.tar
+*.pth
 save_picture
 ROP/
 ROP_pro\
