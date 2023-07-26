@@ -14,7 +14,9 @@ def extract_split(data_path):
             annotation[data['image_name']]={
                 'image_path':data['image_path'],
                 'id':data['image_name'].split('.')[0],
-                'class':data['class']
+                'Stage':data['class'],
+                'Zone':0,
+                'Plus':0,
             }
             split_annote[split].append(data['image_name'])
     with open(os.path.join(data_path,'annotation.json'),'r') as f:
