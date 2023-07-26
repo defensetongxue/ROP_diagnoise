@@ -21,8 +21,8 @@ def generate_ridge(json_dict,data_path):
         for json_obj in data:
             image_name,new_data=parse_json(json_obj)
             if new_data["ridge_number"]>0:     
-                original_annoation[image_name].update(new_data)
-    api_update(data_path,'ridge',"lesion of ROP, including the coordinate lesion of the rop")
+                original_annoation[image_name]['ridge']=(new_data)
+    api_update(data_path,'ridge',"Location annotation for ROP lesion, including the ROP lesion coordinate")
     print("finished")
     
 def parse_json(input_data):

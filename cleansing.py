@@ -10,16 +10,19 @@ if __name__=='__main__':
         "Zone":"Zone for ROP",
         "Plus":"pre plus or plus ROP, 0 normal 1 pre plus 2 plus",
     })
-    if args.generate_quality:
-        pass
+    
     if args.generate_ridge:
+        from utils_ import generate_ridge
+        generate_ridge(args.json_file_dict,data_path=args.path_tar)
+    if args.generate_quality:
         pass
     if args.generate_vessel:
         pass
     if args.generate_pos_embed:
         pass
     if args.generate_ridge_diffusion:
-        pass
+        from utils_ import generate_ridge_diffusion
+        generate_ridge_diffusion(args.path_tar)
     if args.generate_ridge_segment:
         pass
     if args.generate_optic_disc:

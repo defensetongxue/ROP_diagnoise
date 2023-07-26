@@ -19,7 +19,7 @@ def extract_split(data_path):
                 'Plus':0,
             }
             split_annote[split].append(data['image_name'])
-    with open(os.path.join(data_path,'annotation.json'),'r') as f:
+    with open(os.path.join(data_path,'annotations.json'),'r') as f:
         json.dump(annotation,f)
     with open(os.path.join(data_path,'split','0.json'),'r') as f:
         json.dump(split_annote,f)

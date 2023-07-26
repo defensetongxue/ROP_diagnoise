@@ -6,8 +6,32 @@ from PIL import Image
 from scipy.ndimage import zoom
 import os
 from scipy.ndimage import gaussian_filter
-
+from .api_record import api_check,api_update
+def generate_ridge_diffusion(data_path):
+    api_check(data_path,'ridge')
+    os.makedirs(os.path.join(data_path,'ridge_diffusion'),exist_ok=True)
+    os.system(f"rm -rf {os.path.join(data_path,'ridge_diffusion')}/*")
+    with open(os.path.join(data_path,'annotations.json'),'r') as f:
+        data_list=json.load(f)
+    for image_name in data_list:
+        data=data_list[image_name]
+        mask = generate_diffusion_heatmap(data['image_path']
+                                          ,data['ridge']['ridge_coordinate'], 
+                                          factor=0.5,
+                                          Gauss=False)
+        mask_save_name=data['id']+'.png'
+        mask_save_path=os.path.join(data_path,'ridge_diffusion',mask_save_name)
+        Image.fromarray((mask * 255).astype(np.uint8)).save(mask_save_path)
+        data_list[image_name]['ridge_diffusion_path']=mask_save_path
+    with open(os.path.join(data_path,'annotations.json'),'w') as f:
+        json.dump(data_list,f)
+    api_update(data_path,'ridge_diffusion_path','path to ridge diffusion mask')
+    
 def generate_diffusion_heatmap(image_path,points,factor=0.5,Gauss=False):
+    '''
+    factor is the compress rate: for stability, we firt apply a conv layer to 
+    downsample the original data
+    '''
     img_tensor=imge_tensor_compress(image_path,factor)
 
     img = Image.open(image_path).convert('RGB')
@@ -119,31 +143,3 @@ def diffusion(heatmap,img_tensor,p0,p1):
         now_distance=get_distance(px,p1)
         heatmap[px[1],px[0]]=1
     return heatmap
-
-if __name__=='__main__':
-    data_name_list=["77.jpg"]
-    with open('./candidate.json','r') as f:
-        candidate_data=json.load(f)
-    for img_json in candidate_data:
-        mask=generate_diffusion_heatmap(img_json['image_path'],img_json['ridge_coordinate'],
-                                       factor=0.5)
-        # mask=heatmap2mask(heatmap,2)
-        visual_mask(img_json['image_path'],mask,os.path.join('./visual',img_json['image_name']))
-
-def generate_ridge_diffusion(data_path):
-    os.makedirs(os.path.join(data_path,'ridge_diffusion'),exist_ok=True)
-    os.system(f"rm -rf {os.path.join(data_path,'ridge_diffusion')}/*")
-    splits=['train','val','test']
-    for split in splits:
-        with open(os.path.join(data_path,'ridge',f'{split}.json'),'r') as f:
-            data_list=json.load(f)
-        new_data_list=[]
-        for data in data_list:
-            mask = generate_diffusion_heatmap(data['image_path'],data['ridge_coordinate'], factor=0.5, Gauss=False)
-            mask_save_name=data['image_name'].split('.')[0]+'.png'
-            mask_save_path=os.path.join(data_path,'ridge_diffusion',mask_save_name)
-            Image.fromarray((mask * 255).astype(np.uint8)).save(mask_save_path)
-            data['diffusion_mask_path']=mask_save_path
-            new_data_list.append(data)
-        with open(os.path.join(data_path,'ridge',f'{split}.json'),'w') as f:
-            json.dump(new_data_list,f)
