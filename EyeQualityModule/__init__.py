@@ -1,2 +1,2 @@
-from .eye_quality_classify import generate_eyeQuality_result
+from .eye_quality_classify import generate_quality
 from .eye_quality_processer import EyeQualityProcesser

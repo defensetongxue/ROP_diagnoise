@@ -15,7 +15,8 @@ if __name__=='__main__':
         from utils_ import generate_ridge
         generate_ridge(args.json_file_dict,data_path=args.path_tar)
     if args.generate_quality:
-        pass
+        from EyeQualityModule import generate_quality
+        generate_quality(args.path_tar)
     if args.generate_vessel:
         pass
     if args.generate_pos_embed:

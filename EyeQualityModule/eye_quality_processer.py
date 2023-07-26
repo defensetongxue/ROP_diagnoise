@@ -32,9 +32,9 @@ class EyeQualityProcesser():
 
 
 
-    def __call__(self, img,save_path=None):
+    def __call__(self, img_path,save_path=None):
         # open the image and preprocess
-        # img = Image.open(img_path)
+        img = Image.open(img_path)
         if img.size[0]>3: 
             img=img.convert('RGB')
         img = self.transform1(img)
