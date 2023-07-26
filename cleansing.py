@@ -21,11 +21,14 @@ if __name__=='__main__':
         from VesselSegModule import generate_vessel
         generate_vessel(args.path_tar)
     if args.generate_pos_embed:
-        pass
+        from PositionEmbedModule import generate_pos_embed
+        generate_pos_embed(args.path_tar)
     if args.generate_ridge_diffusion:
         from utils_ import generate_ridge_diffusion
         generate_ridge_diffusion(args.path_tar)
     if args.generate_ridge_segment:
-        pass
+        from ridgeSegModule import generate_ridge_segmentation
+        generate_ridge_segmentation(args.path_tar)
+    
     if args.generate_optic_disc:
-        pass
+        pass#TODO

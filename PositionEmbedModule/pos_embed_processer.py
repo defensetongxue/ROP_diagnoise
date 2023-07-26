@@ -1,10 +1,8 @@
 # this file will create an interface for the rop_dig
 from . import models
 import torch
-import torch.nn.functional as F
 import torchvision.transforms as transforms
-import cv2
-import numpy as np
+from PIL import Image
 import inspect
 def get_instance(module, class_name, *args, **kwargs):
     try:
@@ -41,8 +39,9 @@ class PosEmbedProcesser():
             transforms.ToTensor()
         ])
 
-    def __call__(self, vessel,save_path=None):
+    def __call__(self, vessel_path,save_path=None):
         # open the image and preprocess
+        vessel=Image.open(vessel_path)
         img = self.transforms(vessel)
 
         # generate predic vascular with pretrained model

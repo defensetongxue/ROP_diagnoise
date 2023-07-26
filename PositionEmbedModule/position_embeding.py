@@ -1,7 +1,7 @@
-import os
+import os,json
 from .pos_embed_processer import PosEmbedProcesser
-from PIL import Image
-def generate_posEmbed_result(data_path='./data'):
+from utils_ import api_check,api_update
+def generate_pos_embed(data_path='./data'):
     '''
     This funtion should be exited after the data cleasning. 
     └───data
@@ -29,7 +29,9 @@ def generate_posEmbed_result(data_path='./data'):
     most of the code in the repository above in from https://github.com/lseventeen/FR-UNet
     Thanks a lot
     '''
+    print("begin to generate position embeding ")
     # Create save dir 
+    api_check(data_path,'vessel_path')
     save_dir=os.path.join(data_path,'pos_embed')
     os.makedirs(save_dir,exist_ok=True)
     os.system(f'rm -rf {save_dir}/*')
@@ -40,12 +42,16 @@ def generate_posEmbed_result(data_path='./data'):
                                 patch_size=32)
 
     # Image list
-    img_dir=os.path.join(data_path,'vessel_seg')
-    img_list=os.listdir(img_dir)
-    
-    for image_name in img_list:
-        img=Image.open(os.path.join(img_dir,image_name)).convert('RGB')
-        processer(img,save_path=os.path.join(save_dir,image_name.split('.')[0]+'.pt'))
-
+    with open(os.path.join(data_path,'annotations.json'),'r') as f:
+        data_list=json.load(f)
+    for image_name in data_list:
+        save_path=os.path.join(save_dir,data_list[image_name]['id']+'.pt')
+        processer(data_list[image_name]['vessel_path'],
+                  save_path=save_path)
+        data_list[image_name]['pos_embed_path']=save_path
+    with open(os.path.join(data_path,'annotations.json'),'w') as f:
+        json.dump(data_list,f)
+    api_update(data_path,'pos_embed_path','path to position embeding using for ridge segmentation')
+    print("finish")
     
         

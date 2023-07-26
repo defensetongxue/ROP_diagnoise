@@ -1,1 +1,1 @@
-from .position_embeding import generate_posEmbed_result
+from .position_embeding import generate_pos_embed
