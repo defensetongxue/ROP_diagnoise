@@ -1,9 +1,10 @@
 # this file will create an interface for the rop_dig
-from . import models
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
 import inspect
+import os
+from .models import ViT
 def get_instance(module, class_name, *args, **kwargs):
     try:
         cls = getattr(module, class_name)
@@ -15,9 +16,10 @@ def get_instance(module, class_name, *args, **kwargs):
 
 
 class PosEmbedProcesser():
-    def __init__(self, model_name,
-                 vessel_resize,image_orignal_size,patch_size):
-        self.model = get_instance(models, model_name,
+    def __init__(self, 
+                 vessel_resize,image_orignal_size,patch_size,
+                 model_dict="./ROP_diagnoise/model_save"):
+        self.model = ViT(
                     patch_size=patch_size,
                     image_size=vessel_resize,
                     embed_dim=64,
@@ -27,7 +29,7 @@ class PosEmbedProcesser():
                     #  dropout=0.
                      )
         checkpoint = torch.load(
-            './PositionEmbedModule/checkpoint/pos_embed.pth')
+            os.path.join(model_dict,'pos_embed.pth'))
         self.model.load_state_dict(checkpoint)
         self.model.cuda()
 

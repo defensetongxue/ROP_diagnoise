@@ -8,14 +8,13 @@ from .models import FR_UNet
 import cv2
 
 class ridge_segmentation_processer():
-    def __init__(self,point_number,point_dis=50):
-       
-
+    def __init__(self,point_number,point_dis=50,
+                 model_dict="./ROP_diagnoise/model_save"):
         self.point_number=point_number
         self.point_dis=point_dis
         self.model=FR_UNet().cuda()
         self.model.load_state_dict(
-                torch.load('./ridgeSegModule/checkpoint/ridge_seg.pth'))
+                torch.load(os.path.join(model_dict,'ridge_seg.pth')))
         self.img_transforms=transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize(

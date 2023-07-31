@@ -1,10 +1,11 @@
 # this file will create an interface for the rop_dig
-from . import models
+from .models import FR_UNet
 import torch
 from PIL import Image
 import torchvision.transforms as transforms
 import cv2
 import numpy as np
+import os
 def decompose_image_into_tensors(image):
     # Assumes the input is a PyTorch tensor
     height, width = image.shape[1], image.shape[2]
@@ -26,12 +27,13 @@ def compose_tensors_into_image(tensors_list):
 
 class VesselSegProcesser():
     def __init__(self, model_name,
-                 resize=(512, 512)):
-        self.model = getattr(models, model_name)()
+                 resize=(512, 512),
+                 model_dict="./ROP_diagnoise/model_save"):
+        self.model = FR_UNet().cuda()
         checkpoint = torch.load(
-            './VesselSegModule/checkpoint/best.pth')
+            os.path.join(model_dict,'vessel_seg.pth'))
         self.model.load_state_dict(checkpoint['state_dict'])
-        self.model.cuda()
+        self.model.eval()
 
         self.resize = resize
         # generate mask
