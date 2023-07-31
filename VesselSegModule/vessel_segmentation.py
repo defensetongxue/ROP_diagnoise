@@ -1,6 +1,6 @@
 import os,json
 from .vessel_seg_processer import VesselSegProcesser
-from utils_ import api_update
+from ..utils import api_update
 def generate_vessel(data_path='./data'):
     '''
     This funtion should be exited after the data cleasning. 

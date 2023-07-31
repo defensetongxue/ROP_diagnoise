@@ -1,6 +1,6 @@
 import os,json
 from .eye_quality_processer import EyeQualityProcesser
-from utils_ import api_update
+from ..utils import api_update
 def generate_quality(data_path='./data'):
     '''
     This funtion should be exited after the data cleasning. 

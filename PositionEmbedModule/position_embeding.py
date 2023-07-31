@@ -1,6 +1,6 @@
 import os,json
 from .pos_embed_processer import PosEmbedProcesser
-from utils_ import api_check,api_update
+from ..utils import api_check,api_update
 def generate_pos_embed(data_path='./data'):
     '''
     This funtion should be exited after the data cleasning. 

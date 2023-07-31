@@ -4,13 +4,13 @@ import torch
 from PIL import Image, ImageCms
 import torchvision.transforms as transforms
 import numpy as np
-import cv2
+import os
 
 class EyeQualityProcesser():
-    def __init__(self):
+    def __init__(self,model_dict="./ROP_diagnoise/model_save"):
         self.model = dense121_mcs(n_class=3)
         checkpoint = torch.load(
-            './EyeQualityModule/checkpoint/DenseNet121_v3_v1.tar')
+            os.path.join(model_dict,'EyeQuality.tar'))
         self.model.load_state_dict(checkpoint['state_dict'])
         self.model.cuda()
         self.model.eval()

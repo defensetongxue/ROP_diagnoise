@@ -6,12 +6,13 @@ import torchvision.transforms as transforms
 import math
 import numpy as np
 from .model_config import get_OpticDisc_model_config
+import os
 class OpticDetProcesser():
-    def __init__(self,threshold=0.02):
+    def __init__(self,threshold=0.02,model_dict="./ROP_diagnoise/model_save"):
         config=get_OpticDisc_model_config()
         self.model,_ = HRNet(config)
         checkpoint = torch.load(
-            './OpticDetectModule/checkpoint/best.pth')
+            os.path.join(model_dict,'OpticDetect.pth'))
         self.model.load_state_dict(checkpoint)
         self.model.cuda()
 

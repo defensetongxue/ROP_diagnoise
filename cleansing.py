@@ -1,4 +1,4 @@
-from utils_ import api_init
+from utils import api_init
 from config import get_config
 if __name__=='__main__':
     
@@ -12,7 +12,7 @@ if __name__=='__main__':
     })
     
     if args.generate_ridge:
-        from utils_ import generate_ridge
+        from utils import generate_ridge
         generate_ridge(args.json_file_dict,data_path=args.path_tar)
     if args.generate_quality:
         from EyeQualityModule import generate_quality
@@ -24,7 +24,7 @@ if __name__=='__main__':
         from PositionEmbedModule import generate_pos_embed
         generate_pos_embed(args.path_tar)
     if args.generate_ridge_diffusion:
-        from utils_ import generate_ridge_diffusion
+        from utils import generate_ridge_diffusion
         generate_ridge_diffusion(args.path_tar)
     if args.generate_ridge_segment:
         from ridgeSegModule import generate_ridge_segmentation

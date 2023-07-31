@@ -4,7 +4,7 @@ import numpy as np
 import shutil
 import json
 from config import get_config
-from utils_ import generate_data_augument
+from utils import generate_data_augument
 class generate_data_processer():
     def __init__(self,src_path="../autodl-tmp/data_original",
                  tar_path="../autodl-tmp/dataset_ROP",
@@ -274,7 +274,7 @@ if __name__ == '__main__':
                                                     spilt_val=args.val_split )
         cleansing_processer.paser()
     if args.generate_ridge:
-        from utils_ import generate_ridge
+        from utils import generate_ridge
         generate_ridge(args.json_file_dict,args.path_tar)
     # if args.data_augument:
     #     generate_data_augument(data_path=args.path_tar)
