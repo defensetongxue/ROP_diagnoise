@@ -1,7 +1,7 @@
 import os,json
 from .eye_quality_processer import EyeQualityProcesser
 from ..utils import api_update
-def generate_quality(data_path='./data'):
+def generate_quality(data_path='./data',model_dict="./ROP_diagnoise/model_save"):
     '''
     This funtion should be exited after the data cleasning. 
     └───data
@@ -29,7 +29,7 @@ def generate_quality(data_path='./data'):
 
     # Init processer
     print("begin to generate fundus image quality")
-    processer=EyeQualityProcesser()
+    processer=EyeQualityProcesser(model_dict=model_dict)
 
     # Image list
     with open(os.path.join(data_path,'annotations.json'),'r') as f:

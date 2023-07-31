@@ -1,7 +1,7 @@
 import os,json
 from .vessel_seg_processer import VesselSegProcesser
 from ..utils import api_update
-def generate_vessel(data_path='./data'):
+def generate_vessel(data_path='./data',model_dict="./ROP_diagnoise/model_save"):
     '''
     This funtion should be exited after the data cleasning. 
     └───data
@@ -35,7 +35,7 @@ def generate_vessel(data_path='./data'):
     os.makedirs(save_dir,exist_ok=True)
 
     # Init processer
-    processer=VesselSegProcesser(model_name='FR_UNet')
+    processer=VesselSegProcesser(model_name='FR_UNet',model_dict=model_dict)
 
     # Image list
     with open(os.path.join(data_path,'annotations.json'),'r') as f:

@@ -2,12 +2,12 @@ from .ridge_segmentation_prcesser import ridge_segmentation_processer
 import os 
 import json
 from ..utils import api_check,api_update
-def generate_ridge_segmentation(data_path):
+def generate_ridge_segmentation(data_path,model_dict="./ROP_diagnoise/model_save"):
     api_check(data_path,'pos_embed_path')
     print("generate ridge segmentation")
     os.makedirs(os.path.join(data_path,'ridge_segmentation'),exist_ok=True)
     os.system(f"rm -rf {os.path.join(data_path,'ridge_segmentation')}/*")
-    processer=ridge_segmentation_processer(5,150)
+    processer=ridge_segmentation_processer(5,150,model_dict)
     
     with open(os.path.join(data_path,'annotations.json'),'r') as f:
         data_list=json.load(f)

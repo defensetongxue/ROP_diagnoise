@@ -26,7 +26,7 @@ def compose_tensors_into_image(tensors_list):
 
 
 class VesselSegProcesser():
-    def __init__(self, model_name,
+    def __init__(self, 
                  resize=(512, 512),
                  model_dict="./ROP_diagnoise/model_save"):
         self.model = FR_UNet().cuda()

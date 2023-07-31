@@ -1,7 +1,7 @@
 import os,json
 from .pos_embed_processer import PosEmbedProcesser
 from ..utils import api_check,api_update
-def generate_pos_embed(data_path='./data'):
+def generate_pos_embed(data_path='./data',model_dict="./ROP_diagnoise/model_save"):
     '''
     This funtion should be exited after the data cleasning. 
     └───data
@@ -36,10 +36,9 @@ def generate_pos_embed(data_path='./data'):
     os.makedirs(save_dir,exist_ok=True)
     os.system(f'rm -rf {save_dir}/*')
     # Init processer
-    processer=PosEmbedProcesser(model_name='ViT',
-                                vessel_resize=256,
+    processer=PosEmbedProcesser( vessel_resize=256,
                                 image_orignal_size=(1200,1600),#todo
-                                patch_size=32)
+                                patch_size=32,model_dict=model_dict)
 
     # Image list
     with open(os.path.join(data_path,'annotations.json'),'r') as f:

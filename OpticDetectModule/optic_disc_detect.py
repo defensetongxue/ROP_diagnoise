@@ -1,7 +1,7 @@
 import os
 from .optic_disc_detect_processer import OpticDetProcesser
 from PIL import Image
-def generate_OpticDetect_result(data_path='./data'):
+def generate_OpticDetect_result(data_path='./data',model_dict="./ROP_diagnoise/model_save"):
     '''
     This funtion should be exited after the data cleasning. 
     └───data
@@ -37,7 +37,7 @@ def generate_OpticDetect_result(data_path='./data'):
     os.makedirs(save_dir,exist_ok=True)
 
     # Init processer
-    processer=OpticDetProcesser()
+    processer=OpticDetProcesser(model_dict=model_dict)
 
     # Image list
     img_dir=os.path.join(data_path,'images')
