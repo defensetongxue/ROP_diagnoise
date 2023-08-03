@@ -8,6 +8,7 @@ def get_config():
     parser.add_argument('--path_tar', type=str, default="../autodl-tmp/dataset_ROP", help='Where the data generate')
     parser.add_argument('--json_file_dict', type=str, default="./json_src",
                         help='Path to the source folder containing original datasets.')
+    parser.add_argument('--model_dict', type=str, default="./model_save", help='Where the data generate')
     
     parser.add_argument('--generate_ridge', type=bool, default=False, help='if parse orginal ridge annotation data')
     
