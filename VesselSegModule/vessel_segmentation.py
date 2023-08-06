@@ -47,7 +47,7 @@ def generate_vessel(data_path='./data',model_dict="./ROP_diagnoise/model_save"):
         data_list[image_name]['vessel_path']=save_path
     with open(os.path.join(data_path,'annotations.json'),'w') as f:
         json.dump(data_list,f)
-    api_update(data_path,'vessel path','path to vessel segmentation mask')
+    api_update(data_path,'vessel_path','path to vessel segmentation mask')
     print("finish")
 
     

@@ -5,7 +5,7 @@ def extract_split(data_path):
         'val':[],
         'test':[]
     }
-    os.makedirs(os.path.join(data,'split'),exist_ok=True)
+    os.makedirs(os.path.join(data_path,'split'),exist_ok=True)
     annotation={}
     for split in ['train','val','test']:
         with open(os.path.join(data_path,'annotations',f'{split}.json'),'r') as f:
