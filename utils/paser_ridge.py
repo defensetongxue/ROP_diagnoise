@@ -11,9 +11,6 @@ def generate_ridge(json_dict,data_path):
         if not file.split('.')[-1]=='json':
             print(f"unexpected file {file} in json_src")
             continue
-        if not file.split('.')[-1]=='json':
-            print(f"unexpected file {file} in json_src")
-            continue
         with open(os.path.join(json,file), 'r') as f:
             data = json.load(f)
         if int(file[0])==6:
