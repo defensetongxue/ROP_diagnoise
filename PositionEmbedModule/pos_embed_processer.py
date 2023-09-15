@@ -3,7 +3,7 @@ import torch
 import torchvision.transforms as transforms
 from PIL import Image
 import inspect
-import os
+import os,json
 from .models import ViT
 def get_instance(module, class_name, *args, **kwargs):
     try:
@@ -16,34 +16,25 @@ def get_instance(module, class_name, *args, **kwargs):
 
 
 class PosEmbedProcesser():
-    def __init__(self, 
-                 vessel_resize,image_orignal_size,patch_size,
+    def __init__(self, split_name="mini",config_path="./config_file/pos_embed.json",
                  model_dict="./ROP_diagnoise/model_save"):
-        self.model = ViT(
-                    patch_size=patch_size,
-                    image_size=vessel_resize,
-                    embed_dim=64,
-                     depth=3,
-                     heads=4,
-                     mlp_dim=32,
-                    #  dropout=0.
-                     )
+        with open(config_path,'r') as f:
+            cfgs=json.load(f)
+        self.model = ViT(cfgs['model'])
         checkpoint = torch.load(
-            os.path.join(model_dict,'pos_embed.pth'))
+            os.path.join(model_dict,f'{split_name}_pos_embed.pth'))
         self.model.load_state_dict(checkpoint)
         self.model.cuda()
 
-        self.patch_size=patch_size
         # generate mask
-        self.image_original_size=image_orignal_size
         self.transforms = transforms.Compose([
-            transforms.Resize((vessel_resize,vessel_resize)),
+            transforms.Resize(cfgs['image_resize']),
             transforms.ToTensor()
         ])
 
     def __call__(self, vessel_path,save_path=None):
         # open the image and preprocess
-        vessel=Image.open(vessel_path)
+        vessel=Image.open(vessel_path).convert('RGB')
         img = self.transforms(vessel)
 
         # generate predic vascular with pretrained model

@@ -1,7 +1,7 @@
 from .ridge_segmentation_prcesser import ridge_segmentation_processer
 import os 
 import json
-from ..utils import api_check,api_update
+from .api_record import api_check,api_update
 def generate_ridge_segmentation(data_path,model_dict="./ROP_diagnoise/model_save"):
     api_check(data_path,'pos_embed_path')
     print("generate ridge segmentation")

@@ -1,6 +1,6 @@
 import os,json
 from .eye_quality_processer import EyeQualityProcesser
-from ..utils import api_update
+from .api_record import api_update
 def generate_quality(data_path='./data',model_dict="./ROP_diagnoise/model_save"):
     '''
     This funtion should be exited after the data cleasning. 
