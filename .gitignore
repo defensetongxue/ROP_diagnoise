@@ -2,6 +2,7 @@ __pycache__
 saved/
 ring.py
 *.out
+model_save
 *.tar
 *.pth
 save_picture

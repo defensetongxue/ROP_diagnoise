@@ -27,15 +27,12 @@ def compose_tensors_into_image(tensors_list):
 
 class VesselSegProcesser():
     def __init__(self, 
-                 resize=(512, 512),
                  model_dict="./ROP_diagnoise/model_save"):
         self.model = FR_UNet().cuda()
         checkpoint = torch.load(
             os.path.join(model_dict,'vessel_seg.pth'))
         self.model.load_state_dict(checkpoint['state_dict'])
         self.model.eval()
-
-        self.resize = resize
         # generate mask
         mask = Image.open('./VesselSegModule/mask.png')
         mask = transforms.ToTensor()(mask)[0]
