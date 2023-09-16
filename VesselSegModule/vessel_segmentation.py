@@ -1,6 +1,6 @@
 import os,json
 from .vessel_seg_processer import VesselSegProcesser
-from .api_record import api_update
+from ..PositionEmbedModule.api_record import api_update
 def generate_vessel(data_path='./data',model_dict="./ROP_diagnoise/model_save"):
     '''
     This funtion should be exited after the data cleasning. 
