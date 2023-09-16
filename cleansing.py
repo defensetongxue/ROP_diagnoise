@@ -18,4 +18,7 @@ if __name__=='__main__':
                                     ridge_seg_number=args.ridge_seg_number,
                                     ridge_seg_dis=args.ridge_seg_distance)
     if args.generate_optic_disc:
-        pass#TODO
+        from OpticDetectModule import generate_optic_disc_location
+        generate_optic_disc_location(args.data_path,
+                                     split_name=args.split_name,
+                                     model_dict=args.model_dict)

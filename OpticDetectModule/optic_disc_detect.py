@@ -1,51 +1,25 @@
-import os
+import os,json
 from .optic_disc_detect_processer import OpticDetProcesser
 from PIL import Image
-def generate_OpticDetect_result(data_path='./data',model_dict="./ROP_diagnoise/model_save"):
+def generate_optic_disc_location(data_path='./data',
+                                 split_name='mini',
+                                 model_dict="./ROP_diagnoise/model_save"):
     '''
-    This funtion should be exited after the data cleasning. 
-    └───data
-            │
-            └───images
-            │   │
-            │   └───001.jpg
-            │   └───002.jpg
-            │   └───...
-            │
-            └───annotations
-            |   │
-            |   └───train.json
-            |   └───valid.json
-            |   └───test.json
-            └─────new: optic_disc
-                │
-                └───new: 001.txt
-                └───new: 002.txt
-                └───new: ...
-
-    This function will generate the optic disc coordinates for
-    each image in data/image in the format "<x> <y>" in each txt file:
-    if there is no optic disc, the txt file is empty
-    Model training process is in https://github.com/defensetongxue/optic_disc_detection-HRNetv2-
-    Algorithm is from https://github.com/HRNet/HRNet-Facial-Landmark-Detection This repository 
-    is based on the facial landmark detect task, however, as the visualization, I think the result
-    is acceptable and the design of the backbone is good enough
-    Thanks a lot
     '''
-    # Create save dir 
-    save_dir=os.path.join(data_path,'optic_disc')
-    os.makedirs(save_dir,exist_ok=True)
 
-    # Init processer
-    processer=OpticDetProcesser(model_dict=model_dict)
-
-    # Image list
-    img_dir=os.path.join(data_path,'images')
-    img_list=os.listdir(img_dir)
-
-    for image_name in img_list:
-        img=Image.open(os.path.join(img_dir,image_name))
-        processer(img,save_path=os.path.join(save_dir,f"{image_name.split('.')[0]}.txt"))
-    
+    with open(os.path.join(data_path,'annotations.json'),'r') as f:
+        data_dict=json.load(f)
+    processer=OpticDetProcesser(model_path=os.path.join(model_dict,f'{split_name}_optic_disc.pth'),
+            config_path='./config_file/optic_disc.json'
+    )
+    for image_name in data_dict:
+        data=data_dict[image_name]
+        coordinate,distance=processer(data['image_path'])
+        data_dict[image_name]['optic_disc_pred']={
+            'position':coordinate.tolist(),
+            'distance':distance
+        }
+    with open(os.path.join(data_path,'annotations.json'),'w') as f:
+        json.dump(data_dict,f)
     
         

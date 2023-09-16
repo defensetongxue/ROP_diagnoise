@@ -1,10 +1,3 @@
-# ------------------------------------------------------------------------------
-# Copyright (c) Microsoft
-# Licensed under the MIT License.
-# Create by Bin Xiao (Bin.Xiao@microsoft.com)
-# Modified by Tianheng Cheng(tianhengcheng@gmail.com), Yang Zhao
-# Modified by GuoYi
-# ------------------------------------------------------------------------------
 import os
 import logging
 
@@ -250,13 +243,13 @@ blocks_dict = {
 
 class HighResolutionNet(nn.Module):
 
-    def __init__(self, config, **kwargs):
+    def __init__(self, configs):
         self.inplanes = 64
-        extra = config.MODEL.EXTRA
+        extra = configs['extra']
         super(HighResolutionNet, self).__init__()
 
         # stem net
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1,
+        self.conv1 = nn.Conv2d(configs["in_channels"], 64, kernel_size=3, stride=2, padding=1,
                                bias=False)
         self.bn1 = BatchNorm2d(64, momentum=BN_MOMENTUM)
         self.conv2 = nn.Conv2d(64, 64, kernel_size=3, stride=2, padding=1,
@@ -266,9 +259,9 @@ class HighResolutionNet(nn.Module):
         self.sf = nn.Softmax(dim=1)
         self.layer1 = self._make_layer(Bottleneck, 64, 64, 4)
 
-        self.stage2_cfg = extra['STAGE2']
-        num_channels = self.stage2_cfg['NUM_CHANNELS']
-        block = blocks_dict[self.stage2_cfg['BLOCK']]
+        self.stage2_cfg = extra['stage2']
+        num_channels = self.stage2_cfg['num_channels']
+        block = blocks_dict[self.stage2_cfg['block']]
         num_channels = [
             num_channels[i] * block.expansion for i in range(len(num_channels))]
         self.transition1 = self._make_transition_layer(
@@ -276,9 +269,9 @@ class HighResolutionNet(nn.Module):
         self.stage2, pre_stage_channels = self._make_stage(
             self.stage2_cfg, num_channels)
 
-        self.stage3_cfg = extra['STAGE3']
-        num_channels = self.stage3_cfg['NUM_CHANNELS']
-        block = blocks_dict[self.stage3_cfg['BLOCK']]
+        self.stage3_cfg = extra['stage3']
+        num_channels = self.stage3_cfg['num_channels']
+        block = blocks_dict[self.stage3_cfg['block']]
         num_channels = [
             num_channels[i] * block.expansion for i in range(len(num_channels))]
         self.transition2 = self._make_transition_layer(
@@ -286,9 +279,9 @@ class HighResolutionNet(nn.Module):
         self.stage3, pre_stage_channels = self._make_stage(
             self.stage3_cfg, num_channels)
 
-        self.stage4_cfg = extra['STAGE4']
-        num_channels = self.stage4_cfg['NUM_CHANNELS']
-        block = blocks_dict[self.stage4_cfg['BLOCK']]
+        self.stage4_cfg = extra['stage4']
+        num_channels = self.stage4_cfg['num_channels']
+        block = blocks_dict[self.stage4_cfg['block']]
         num_channels = [
             num_channels[i] * block.expansion for i in range(len(num_channels))]
         self.transition3 = self._make_transition_layer(
@@ -304,15 +297,24 @@ class HighResolutionNet(nn.Module):
                 out_channels=final_inp_channels,
                 kernel_size=1,
                 stride=1,
-                padding=1 if extra.FINAL_CONV_KERNEL == 3 else 0),
+                padding=1 if extra["final_conv_kernel"] == 3 else 0),
             BatchNorm2d(final_inp_channels, momentum=BN_MOMENTUM),
             nn.ReLU(inplace=True),
             nn.Conv2d(
                 in_channels=final_inp_channels,
-                out_channels=config.MODEL.NUM_JOINTS,
-                kernel_size=extra.FINAL_CONV_KERNEL,
+                out_channels=1,
+                kernel_size=extra["final_conv_kernel"],
                 stride=1,
-                padding=1 if extra.FINAL_CONV_KERNEL == 3 else 0)
+                padding=1 if extra["final_conv_kernel"] == 3 else 0)
+        )
+        self.Th = torch.nn.Sigmoid()
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool2d((1, 1)),  # Pooling
+            nn.Flatten(),  # Flatten the tensor before fully connected layers
+            nn.Linear(72, 36),  # Fully connected layer
+            nn.ReLU(inplace=True),  # Activation
+            nn.Dropout(0.5),  # Dropout for regularization
+            nn.Linear(36, configs['num_classes']),  # Fully connected layer
         )
 
     def _make_transition_layer(
@@ -370,12 +372,12 @@ class HighResolutionNet(nn.Module):
 
     def _make_stage(self, layer_config, num_inchannels,
                     multi_scale_output=True):
-        num_modules = layer_config['NUM_MODULES']
-        num_branches = layer_config['NUM_BRANCHES']
-        num_blocks = layer_config['NUM_BLOCKS']
-        num_channels = layer_config['NUM_CHANNELS']
-        block = blocks_dict[layer_config['BLOCK']]
-        fuse_method = layer_config['FUSE_METHOD']
+        num_modules = layer_config['num_modules']
+        num_branches = layer_config['num_branches']
+        num_blocks = layer_config['num_blocks']
+        num_channels = layer_config['num_channels']
+        block = blocks_dict[layer_config['block']]
+        fuse_method = layer_config['fuse_method']
 
         modules = []
         for i in range(num_modules):
@@ -406,31 +408,28 @@ class HighResolutionNet(nn.Module):
         x = self.bn2(x)
         x = self.relu(x)
         x = self.layer1(x)
-
         x_list = []
-        for i in range(self.stage2_cfg['NUM_BRANCHES']):
+        for i in range(self.stage2_cfg['num_branches']):
             if self.transition1[i] is not None:
                 x_list.append(self.transition1[i](x))
             else:
                 x_list.append(x)
         y_list = self.stage2(x_list)
-
         x_list = []
-        for i in range(self.stage3_cfg['NUM_BRANCHES']):
+        for i in range(self.stage3_cfg['num_branches']):
             if self.transition2[i] is not None:
                 x_list.append(self.transition2[i](y_list[-1]))
             else:
                 x_list.append(y_list[i])
         y_list = self.stage3(x_list)
-
         x_list = []
-        for i in range(self.stage4_cfg['NUM_BRANCHES']):
+        for i in range(self.stage4_cfg['num_branches']):
             if self.transition3[i] is not None:
                 x_list.append(self.transition3[i](y_list[-1]))
             else:
                 x_list.append(y_list[i])
         x = self.stage4(x_list)
-
+        distance=self.classifier(x[2])
         # Head Part
         height, width = x[0].size(2), x[0].size(3)
         x1 = F.interpolate(x[1], size=(height, width), mode='bilinear', align_corners=False)
@@ -438,8 +437,8 @@ class HighResolutionNet(nn.Module):
         x3 = F.interpolate(x[3], size=(height, width), mode='bilinear', align_corners=False)
         x = torch.cat([x[0], x1, x2, x3], 1)
         x = self.head(x)
-
-        return x
+        x=self.Th(x).squeeze()
+        return (x,distance)
 
     def init_weights(self, pretrained=''):
         logger.info('=> init weights from normal distribution')
@@ -462,12 +461,24 @@ class HighResolutionNet(nn.Module):
             #         '=> loading {} pretrained model {}'.format(k, pretrained))
             model_dict.update(pretrained_dict)
             self.load_state_dict(model_dict)
+            
+class Loss_Unet():
+    def __init__(self, locat_r=0.7,Loss_func="MSELoss"):
+        self.r = locat_r
+        # DiceLoss,FocalLoss
+        self.location_loss = getattr(nn,Loss_func)()
+        self.class_loss = nn.CrossEntropyLoss()
+
+    def __call__(self, ouputs, targets):
+        out_heatmap, out_distance = ouputs
+        gt_heatmap, gt_distance = targets
+        return self.r*self.class_loss(out_heatmap, gt_heatmap) + \
+            (1-self.r)*self.class_loss(out_distance, gt_distance)
 
 
 def Build_HRNet(config, **kwargs):
 
     model = HighResolutionNet(config, **kwargs)
-    pretrained = config.MODEL.PRETRAINED if config.MODEL.INIT_WEIGHTS else ''
-    model.init_weights(pretrained=pretrained)
-
-    return model,torch.nn.MSELoss()
+    # pretrained = config.MODEL.PRETRAINED if config.MODEL.INIT_WEIGHTS else ''
+    # model.init_weights(pretrained=pretrained)
+    return model,Loss_Unet(locat_r=config["location_r"],Loss_func=config["loss_func"])

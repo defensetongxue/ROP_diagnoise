@@ -18,6 +18,7 @@ class ridge_segmentation_processer():
         self.model=FR_UNet(cfgs['model']).cuda()
         self.model.load_state_dict(
                 torch.load(model_path))
+        self.model.eval()
         self.img_transforms=transforms.Compose([
             ContrastEnhancement(),
             transforms.ToTensor(),
