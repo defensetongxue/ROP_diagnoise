@@ -14,6 +14,8 @@ if __name__=='__main__':
         generate_pos_embed(args.data_path,model_dict=args.model_dict,split_name=args.split_name)
     if args.generate_ridge_segment:
         from ridgeSegModule import generate_ridge_segmentation
-        generate_ridge_segmentation(args.data_path,model_dict=args.model_dict)
+        generate_ridge_segmentation(args.data_path,model_dict=args.model_dict,
+                                    ridge_seg_number=args.ridge_seg_number,
+                                    ridge_seg_dis=args.ridge_seg_distance)
     if args.generate_optic_disc:
         pass#TODO

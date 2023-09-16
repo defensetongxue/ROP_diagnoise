@@ -1,7 +1,9 @@
 import os,json
 from .pos_embed_processer import PosEmbedProcesser
 from .api_record import api_check,api_update
-def generate_pos_embed(data_path='./data',model_dict="./ROP_diagnoise/model_save",split_name="mini"):
+def generate_pos_embed(data_path='./data',
+                       model_dict="./ROP_diagnoise/model_save",
+                       split_name="mini"):
     print("begin to generate position embeding ")
     # Create save dir 
     api_check(data_path,'vessel_path')
