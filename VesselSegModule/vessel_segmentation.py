@@ -1,34 +1,7 @@
 import os,json
 from .vessel_seg_processer import VesselSegProcesser
-from ..PositionEmbedModule.api_record import api_update
+from .api_record import api_update
 def generate_vessel(data_path='./data',model_dict="./ROP_diagnoise/model_save"):
-    '''
-    This funtion should be exited after the data cleasning. 
-    └───data
-            │
-            └───images
-            │   │
-            │   └───001.jpg
-            │   └───002.jpg
-            │   └───...
-            │
-            └───annotations
-            |   │
-            |   └───train.json
-            |   └───valid.json
-            |   └───test.json
-            └─────new: vessel_seg
-                │
-                └───new: 001.jpg
-                └───new: 002.jpg
-                └───new: ...
-
-    This function will generate the blood vessel segmentation result for
-    each image in data/image
-    Model training process is in https://github.com/defensetongxue/Vessel_segmentation
-    most of the code in the repository above in from https://github.com/lseventeen/FR-UNet
-    Thanks a lot
-    '''
     # Create save dir 
     print("begin to generate vessel segmentation mask")
     save_dir=os.path.join(data_path,'vessel_seg')
