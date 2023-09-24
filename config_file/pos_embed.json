@@ -1,35 +1,37 @@
 {
     "num_works": 12,
-    "batch_size":2,
+    "batch_size":64,
     "heatmap_rate":0.25,
     "sigma":1.5,
     "split_name":"mini",
     "image_resize": [256,256],
-    "patch_size":32,
+    "patch_size":16,
     "model": {
         "image_resize": [256,256],
-        "patch_size":32,
-        "depth":3,
+        "patch_size":16,
+        "depth":4,
         "embed_dim":64,
         "heads":4,
         "emb_dropout":0.3,
-        "dim_head":12,
+        "dim_head":64,
         "mlp_dim":32,
         "dropout":0.3,
-        "location_r":0.7,
         "loss_func":"BCELoss",
         "in_channels": 3,
         "official_model_save":"./experiments"
     },
     "lr_strategy":{
-        "method":"constant"
+        "method":"reduce_plateau",
+        "reduce_plateau_patience":15,
+        "reduce_plateau_factor":0.25,
+        "cooldown":5
     },
     "train": {
         "begin_epoch": 0,
-        "end_epoch": 1,
+        "end_epoch": 500,
         "early_stop": 30,
         "optimizer": "adam",
-        "lr": 0.0001,
+        "lr": 0.001,
         "wd": 0.0,
         "lr_step": [
             30,
