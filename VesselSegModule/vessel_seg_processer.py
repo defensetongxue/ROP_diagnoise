@@ -1,44 +1,39 @@
 # this file will create an interface for the rop_dig
 from .models import FR_UNet
 import torch
-from PIL import Image
+from PIL import Image,ImageEnhance
 import torchvision.transforms as transforms
 import cv2
 import numpy as np
 import os
-def decompose_image_into_tensors(image):
-    # Assumes the input is a PyTorch tensor
-    height, width = image.shape[1], image.shape[2]
-    # Split the image tensor into two along the height
-    first_half, second_half = torch.split(image, height//2, dim=1)
-    # Then split each half into two along the width
-    first_half_tensors = torch.split(first_half, width//2, dim=2)
-    second_half_tensors = torch.split(second_half, width//2, dim=2)
-    # Return a list of all four image parts
-    return list(first_half_tensors) + list(second_half_tensors)
+class ContrastEnhancement:
+    def __init__(self, factor=1.5):
+        self.factor = factor
 
-
-def compose_tensors_into_image(tensors_list):
-    # Assumes the input is a list of four tensors
-    top = torch.cat(tensors_list[:2], dim=1)  # Concatenate along width
-    bottom = torch.cat(tensors_list[2:], dim=1)  # Concatenate along width
-    return torch.cat([top, bottom], dim=0)  # Concatenate along height
-
+    def __call__(self, img):
+        enhancer = ImageEnhance.Contrast(img)
+        img = enhancer.enhance(self.factor)
+        return img
 
 class VesselSegProcesser():
     def __init__(self, 
                  model_dict="./ROP_diagnoise/model_save"):
-        self.model = FR_UNet().cuda()
         checkpoint = torch.load(
             os.path.join(model_dict,'vessel_seg.pth'))
-        self.model.load_state_dict(checkpoint['state_dict'])
+        loaded_state_dict = checkpoint['state_dict']
+        new_state_dict = {k.replace("module.", ""): v for k, v in loaded_state_dict.items()}
+        self.model = FR_UNet().cuda()
+        self.model.load_state_dict(new_state_dict)
         self.model.eval()
         # generate mask
         mask = Image.open('./VesselSegModule/mask.png')
+        mask=transforms.Resize((300,400))(mask)
         mask = transforms.ToTensor()(mask)[0]
         self.mask = mask
 
         self.transforms = transforms.Compose([
+            ContrastEnhancement(),
+            transforms.Resize((300,400)),
             transforms.Grayscale(1),
             transforms.ToTensor(),
             transforms.Normalize([0.3968], [0.1980])
@@ -48,19 +43,14 @@ class VesselSegProcesser():
 
     def __call__(self, img_path,save_path=None):
         img=Image.open(img_path)
+        img=self.transforms(img)
         # open the image and preprocess
         with torch.no_grad():
-            decomposed_images = decompose_image_into_tensors(self.transforms(img))
-            composed_mask = []
-            for decomposed_image in decomposed_images:
-                decomposed_image = decomposed_image.unsqueeze(0).cuda() 
-                mask_part = self.model(decomposed_image).detach().cpu()
-                mask_part = torch.sigmoid(mask_part.squeeze())
-                composed_mask.append(mask_part)
-
-            vessel = compose_tensors_into_image(composed_mask)
+            mask_part = self.model(img.cuda().unsqueeze(0)).detach().cpu()
+            mask_part = torch.sigmoid(mask_part.squeeze())
+            print(mask_part.shape)
             # mask
-            predict = torch.where(self.mask < 0.1, self.mask, vessel)
+            predict = torch.where(self.mask < 0.1, self.mask, mask_part)
             if save_path:
                 cv2.imwrite(save_path,
                     np.uint8(predict.numpy()*255))
