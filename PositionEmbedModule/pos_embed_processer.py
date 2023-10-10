@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 from PIL import Image
 import inspect
 import os,json
-from .models import ViT
+from .models import ResNet
 def get_instance(module, class_name, *args, **kwargs):
     try:
         cls = getattr(module, class_name)
@@ -20,7 +20,7 @@ class PosEmbedProcesser():
                  model_dict="./ROP_diagnoise/model_save"):
         with open(config_path,'r') as f:
             cfgs=json.load(f)
-        self.model = ViT(cfgs['model'])
+        self.model = ResNet(cfgs['model'])
         checkpoint = torch.load(
             os.path.join(model_dict,f'{split_name}_pos_embed.pth'))
         self.model.load_state_dict(checkpoint)
@@ -34,7 +34,7 @@ class PosEmbedProcesser():
 
     def __call__(self, vessel_path,save_path=None):
         # open the image and preprocess
-        vessel=Image.open(vessel_path).convert('RGB')
+        vessel=Image.open(vessel_path[:-3]+'png').convert('RGB')
         img = self.transforms(vessel)
 
         # generate predic vascular with pretrained model

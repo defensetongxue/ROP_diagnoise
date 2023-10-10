@@ -7,9 +7,10 @@
     "image_resize": [256,256],
     "patch_size":16,
     "model": {
+        "name":"resnet",
         "image_resize": [256,256],
         "patch_size":16,
-        "depth":4,
+        "depth":3,
         "embed_dim":64,
         "heads":4,
         "emb_dropout":0.3,
