@@ -308,14 +308,14 @@ class HighResolutionNet(nn.Module):
                 padding=1 if extra["final_conv_kernel"] == 3 else 0)
         )
         self.Th = torch.nn.Sigmoid()
-        self.classifier = nn.Sequential(
-            nn.AdaptiveAvgPool2d((1, 1)),  # Pooling
-            nn.Flatten(),  # Flatten the tensor before fully connected layers
-            nn.Linear(72, 36),  # Fully connected layer
-            nn.ReLU(inplace=True),  # Activation
-            nn.Dropout(0.5),  # Dropout for regularization
-            nn.Linear(36, configs['num_classes']),  # Fully connected layer
-        )
+        # self.classifier = nn.Sequential(
+        #     nn.AdaptiveAvgPool2d((1, 1)),  # Pooling
+        #     nn.Flatten(),  # Flatten the tensor before fully connected layers
+        #     nn.Linear(72, 36),  # Fully connected layer
+        #     nn.ReLU(inplace=True),  # Activation
+        #     nn.Dropout(0.5),  # Dropout for regularization
+        #     nn.Linear(36, configs['num_classes']),  # Fully connected layer
+        # )
 
     def _make_transition_layer(
             self, num_channels_pre_layer, num_channels_cur_layer):
@@ -429,16 +429,15 @@ class HighResolutionNet(nn.Module):
             else:
                 x_list.append(y_list[i])
         x = self.stage4(x_list)
-        distance=self.classifier(x[2])
+        # distance=self.classifier(x[2])
         # Head Part
         height, width = x[0].size(2), x[0].size(3)
         x1 = F.interpolate(x[1], size=(height, width), mode='bilinear', align_corners=False)
         x2 = F.interpolate(x[2], size=(height, width), mode='bilinear', align_corners=False)
         x3 = F.interpolate(x[3], size=(height, width), mode='bilinear', align_corners=False)
         x = torch.cat([x[0], x1, x2, x3], 1)
-        x = self.head(x)
-        x=self.Th(x).squeeze()
-        return (x,distance)
+        x = self.head(x).squeeze(1)
+        return x
 
     def init_weights(self, pretrained=''):
         logger.info('=> init weights from normal distribution')
@@ -462,23 +461,10 @@ class HighResolutionNet(nn.Module):
             model_dict.update(pretrained_dict)
             self.load_state_dict(model_dict)
             
-class Loss_Unet():
-    def __init__(self, locat_r=0.7,Loss_func="MSELoss"):
-        self.r = locat_r
-        # DiceLoss,FocalLoss
-        self.location_loss = getattr(nn,Loss_func)()
-        self.class_loss = nn.CrossEntropyLoss()
-
-    def __call__(self, ouputs, targets):
-        out_heatmap, out_distance = ouputs
-        gt_heatmap, gt_distance = targets
-        return self.r*self.class_loss(out_heatmap, gt_heatmap) + \
-            (1-self.r)*self.class_loss(out_distance, gt_distance)
-
 
 def Build_HRNet(config, **kwargs):
 
     model = HighResolutionNet(config, **kwargs)
     # pretrained = config.MODEL.PRETRAINED if config.MODEL.INIT_WEIGHTS else ''
     # model.init_weights(pretrained=pretrained)
-    return model,Loss_Unet(locat_r=config["location_r"],Loss_func=config["loss_func"])
+    return model,getattr(nn,config["loss_func"])()

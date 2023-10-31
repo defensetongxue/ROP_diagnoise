@@ -1,18 +1,17 @@
 {
-    "num_works": 12,
-    "batch_size":2,
+    "num_works": 16,
+    "batch_size":20,
     "heatmap_rate":0.25,
     "sigma":1.5,
-    "split_name":"mini",
-    "image_resize": [256,256],
+    "split_name":"u_1",
+    "image_resize": [512,512],
     "model": {
-        "location_r":0.7,
+        "heatmap_rate":0.25,
+        "location_r":1.0,
         "loss_func":"MSELoss",
         "in_channels": 3,
         "name": "hrnet",
         "num_classes":3,
-        "num_joints": 1,
-        "init_weights": true,
         "pretrained": ".",
         "sigma": 1.5,
         "extra": {
@@ -68,19 +67,19 @@
         }
     },
     "lr_strategy":{
-        "method":"constant"
+        "method":"constant",
+        "reduce_plateau_patience":8,
+        "reduce_plateau_factor":0.25,
+        "cooldown":5,
+        "cosine_annealing_T_max":10
     },
     "train": {
         "begin_epoch": 0,
-        "end_epoch": 1,
+        "end_epoch": 500,
         "early_stop": 30,
         "optimizer": "adam",
-        "lr": 0.0001,
+        "lr": 1e-3,
         "wd": 0.0,
-        "lr_step": [
-            30,
-            50
-        ],
         "momentum": 0.0,
         "nesterov": false
     }

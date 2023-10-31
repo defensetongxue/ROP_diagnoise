@@ -41,7 +41,7 @@ class OpticDetProcesser():
             img = img.unsqueeze(0)  # as batch size 1
             position = self.model(img.cuda())
             # the input of the 512 is to match the  mini-size of vessel model
-            score_map = position.data.cpu().unsqueeze(0)
+            score_map = position.data.cpu()
             preds = decode_preds(score_map)
             preds=preds.squeeze()
             preds=preds*np.array([w_ratio,h_ratio])

@@ -37,7 +37,7 @@ class OpticClsProcesser():
             img = img.unsqueeze(0)  # as batch size 1
             preds = self.model(img.cuda()).cpu()
             distance_pred= torch.argmax(preds.squeeze())
-            return self.distance_map(distance_pred)
+            return self.distance_map[int(distance_pred)]
 
 class ContrastEnhancement:
     def __init__(self, factor=1.5):
