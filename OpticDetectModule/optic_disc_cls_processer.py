@@ -25,8 +25,7 @@ class OpticClsProcesser():
                 mean=[0.4623, 0.3856, 0.2822],
                 std=[0.2527, 0.1889, 0.1334])
         ])
-        self.distance_map={0:"near",1:"far"
-        }
+        self.distance_map={0:"near",1:"far"}
     def __call__(self, image_path):
         # open the image and preprocess
         with torch.no_grad():

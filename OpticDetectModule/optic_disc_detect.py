@@ -22,24 +22,33 @@ def generate_optic_disc_location(data_path='./data',
     mask=Image.open('./OpticDetectModule/mask.png').convert('L')
     mask=np.array(mask)
     mask[mask>0]=1
+    new={}
+    cnt=0
     for image_name in data_dict:
+        image_name="5168.jpg"
+        cnt+=1
         data=data_dict[image_name]
+        new[image_name]={}
         coordinate,distance=processer(data['image_path'])
         if distance=='visible':
-            data_dict[image_name]['optic_disc_pred']={
-            'position':coordinate.tolist(),
+            coordinate=coordinate.tolist()
+            coordinate=[int(i) for i in coordinate]
+            new[image_name]['optic_disc_pred']={
+            'position':coordinate,
             'distance':distance
-        }
+            }
             continue
         coordinate,_=processer_u(data['image_path'])
-        coordinate_np=coordinate.numpy().astype(int)
-        coordinate=find_nearest_zero(mask,coordinate_np)
+        coordinate=coordinate.numpy()
+        point=[int(coordinate[0]),int(coordinate[1])]
+        x,y=find_nearest_zero(mask,point)
         distance=class_model(data['image_path'])
-        data_dict[image_name]['optic_disc_pred']={
-            'position':coordinate,
+        new[image_name]['optic_disc_pred']={
+            'position':[x,y],
             'distance':distance}
-    with open(os.path.join(data_path,'annotations.json'),'w') as f:
-        json.dump(data_dict,f)
+
+    with open(os.path.join(data_path,'optic_dict.json'),'w') as f:
+        json.dump(new,f)
     
 
 def find_nearest_zero(mask, point):
@@ -47,7 +56,7 @@ def find_nearest_zero(mask, point):
     cx, cy = w // 2, h // 2  # center of the image
     x, y = point
 
-    if mask[y, x] == 0:
+    if x>=1600 or y>=1200 or mask[y, x] == 0 :
         return point
 
     # Get the direction vector for stepping along the line
@@ -56,10 +65,14 @@ def find_nearest_zero(mask, point):
 
     # Step along the line until we hit a zero in the mask
     while 0 <= x < w and 0 <= y < h:
-        if mask[int(y), int(x)] == 0:
-            return (int(x), int(y))
+        if  y>=1200:
+            return int(x),int(y-1)
+        if x>=1600:
+            return int(x-1),int(y) 
+        if  mask[int(y), int(x)] == 0:
+            return int(x), int(y)
         
         x += direction[0]
         y += direction[1]
 
-    return [x,y]
+    return None

@@ -45,7 +45,7 @@ class OpticDetProcesser():
             preds = decode_preds(score_map)
             preds=preds.squeeze()
             preds=preds*np.array([w_ratio,h_ratio])
-            distance_pred= "visible" if torch.max(score_map)>0.15 else 'near'
+            distance_pred= "visible" if torch.max(score_map)>0.15 else "near"
             return preds,distance_pred
 
 def get_preds(scores):
