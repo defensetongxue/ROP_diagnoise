@@ -39,15 +39,14 @@ class OpticDetProcesser():
 
             # generate predic heatmap with pretrained   model
             img = img.unsqueeze(0)  # as batch size 1
-            position,distance = self.model(img.cuda())
+            position = self.model(img.cuda())
             # the input of the 512 is to match the  mini-size of vessel model
             score_map = position.data.cpu().unsqueeze(0)
             preds = decode_preds(score_map)
             preds=preds.squeeze()
             preds=preds*np.array([w_ratio,h_ratio])
-            distance=torch.argmax(distance, dim=1).squeeze()
-            distance=self.distance_map[int(distance)]
-            return preds,distance
+            distance_pred= "visible" if torch.max(score_map)>0.15 else 'near'
+            return preds,distance_pred
 
 def get_preds(scores):
     """
