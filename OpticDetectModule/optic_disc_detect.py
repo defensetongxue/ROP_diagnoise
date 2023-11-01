@@ -24,16 +24,17 @@ def generate_optic_disc_location(data_path='./data',
     mask[mask>0]=1
     for image_name in data_dict:
         data=data_dict[image_name]
-        coordinate,distance=processer(data['image_path'])
+        coordinate,distance,val=processer(data['image_path'])
         if distance=='visible':
             coordinate=coordinate.tolist()
             coordinate=[int(i) for i in coordinate]
             data_dict[image_name]['optic_disc_pred']={
             'position':coordinate,
-            'distance':distance
+            'distance':distance,
+            'value':val
             }
             continue
-        coordinate,_=processer_u(data['image_path'])
+        coordinate,_,_=processer_u(data['image_path'])
         coordinate=coordinate.numpy()
         point=[int(coordinate[0]),int(coordinate[1])]
         x,y=find_nearest_zero(mask,point)
