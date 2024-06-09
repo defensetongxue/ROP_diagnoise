@@ -1,0 +1,19 @@
+# do not have zone 
+1113.jpg
+1110.jpg
+756.jpg
+757.jpg
+758.jpg
+3273.jpg
+8179.jpg
+6860.jpg
+3933.jpg
+3760.jpg
+6608.jpg
+60.jpg
+8129.jpg
+2584.jpg
+5059.jpg
+3432.jpg
+587.jpg
+4513.jpg
