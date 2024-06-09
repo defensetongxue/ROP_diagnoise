@@ -1,1 +1,0 @@
-from .ridge_segmentation import generate_ridge_segmentation
