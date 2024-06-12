@@ -13,7 +13,7 @@ Project workflow diagram:
 - **Optic Disc Location**: [https://github.com/defensetongxue/optic_disc_location](https://github.com/defensetongxue/optic_disc_location)
 - **Lesion Segmentation**: [https://github.com/defensetongxue/ridge_segmentation](https://github.com/defensetongxue/ridge_segmentation)
 - **ROP Zone Calculation (Angle Calculation)**: [https://github.com/defensetongxue/ROP_Zone](https://github.com/defensetongxue/ROP_Zone)
-- **ROP Staging (Sample and Stage)**: [https://github.com/defensetongxue/ROP_stage](https://github.com/defensetongxue/ROP_stageP)
+- **ROP Staging (Sample and Stage)**: [https://github.com/defensetongxue/ROP_stage](https://github.com/defensetongxue/ROP_stage)
 - **ROP Baseline Models**: We have rebuilt other models currently used in the industry for ROP testing. Reference [https://github.com/defensetongxue/ROP_BaseLine](https://github.com/defensetongxue/ROP_BaseLine)
 - **Demo**: We have conducted tests on the ShenZhenROPdataset. This repository can be used for testing on other datasets. We plan to release a set of models: [https://github.com/defensetongxue/ROP_demo](https://github.com/defensetongxue/ROP_demo)
 - **Simulation Experiment**: We conducted simulation experiments and wrote a single HTML for related simulation experiments: [https://github.com/defensetongxue/ROP_assistance_demo](https://github.com/defensetongxue/ROP_assistance_demo)
